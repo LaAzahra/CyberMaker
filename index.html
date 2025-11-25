@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberMaker</title>
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css"/>
+  <style>
+    /* botão logout só aparece ao passar o mouse na foto */
+
+    #btn-logout {
+      display: none;
+      position: absolute;
+      top: 55px;
+      left: center;
+      background: #a30000;
+      border: none;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .logo:hover #btn-logout {
+      display: block;
+    }
+
+    #fotoPerfil {
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+
+<body>
+  <div class="page">
+  <header>
+
+     <div class="logo" id="logo">
+        <img id="fotoPerfil" src="imagens/default.jpg" alt="Foto de perfil" >
+        <button id="btn-logout">Sair</button>
+        <span id="nome-usuario">CyberMaker</span>
+     </div>
+     
+  <div class="user-options" id="user-options">
+   <a href="index.html"> <button id="btn-inicio">Início</button></a>
+   <a href="comunidade.html"><button>A comunidade</button></a>
+    <a href="login.html"><button id="btn-login">Login</button></a>
+    <a href="registrar.html"><button id="btn-registrar">Registrar</button></a>
+  </div>
+
+  </header>
+
+  <div class="vignette"></div>
+  <div class="lanterna"></div>
+<br><br><br><br>
+  <h1>CyberMaker</h1>
+  <p class="intro">
+    Programamos nas sombras para servir a luz, neste domínio, <strong>guarde suas ideias</strong> no Diário,
+    ou <strong>enfrente a Arena</strong>, onde elas se tornam reais, competem por pontos e ecoam entre
+    aqueles que buscam inovação. Sua decisão moldará seu caminho.
+  </p>
+
+  <!--Botões-->
+  <div class="choices">
+   <a href="diario.html"> <button class="choice-btn" id="btn-diario"><span>Diário</span></button> </a>
+   <a href="arena.html"> <button class="choice-btn1" id="btn-arena"><span>Arena</span></button> </a>
+  </div>
+<br><br><br>
+  <!-- Seções explicativas -->
+  <div class="section fade-up">
+    <img src="imagens/ideias.png" alt="Diário">
+    
+  </div>
+
+  <div class="section fade-left">
+    <img src="imagens/arena.png" alt="Arena">
+  </div>
+
+  <div class="section fade-right">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoD2BWq4qAzsRp1y3OM2vKX5-okewx7zieg&s" alt="Comunidade">
+    <h2>A Comunidade</h2>
+    <p>No subsolo do CyberMaker não se caminha sozinho.  
+      A comunidade é formada por outros criadores que compartilham descobertas,
+      colaboram em projetos e competem de forma saudável na Arena.  
+      Cada conexão é como uma corrente de luz entre abismos distantes, expandindo
+      o alcance das ideias e fortalecendo todos os envolvidos.</p>
+  </div>
+
+  <!--Barra inferior-->
+  <footer>
+     2025 CyberMaker - Um mundo infinito de projetos.
+  </footer>
+
+  <!-- Áudio ambiente -->
+  <audio id="bg-audio" autoplay loop>
+    <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_1e57d4f624.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Script -->
+  
+ <script>
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const fotoPerfil = document.getElementById("fotoPerfil");
+  const nomeUsuario = document.getElementById("nome-usuario");
+  const btnLogout = document.getElementById("btn-logout");
+
+  function atualizarHeader() {
+    if (usuarioLogado) {
+      nomeUsuario.textContent = usuarioLogado.nome;
+      fotoPerfil.src = usuarioLogado.foto || "imagens/default.jpg";
+    } else {
+      nomeUsuario.textContent = "CyberMaker";
+      fotoPerfil.src = "imagens/default.jpg";
+    }
+  }
+
+  btnLogout.addEventListener("click", () => {
+    localStorage.removeItem("usuarioLogado");
+    nomeUsuario.textContent = "CyberMaker";
+    fotoPerfil.src = "imagens/default.jpg";
+    alert("Você saiu da conta!");
+    window.location.href = "index.html";
+    //Atualizar para offline remova se nao for
+    fetch("https://cybermakersite-production.up.railway.app/api/usuarios/online", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ usuario_id: usuarioLogado.id })
+});
+localStorage.removeItem("usuarioLogado");
+window.location.href = "login.html";
+
+  });
+
+  atualizarHeader();
+
+  // partículas (mantive seu efeito)
+  let coldParticles = [];
+  for(let i=0;i<250;i++){
+      const p=document.createElement('div');
+      p.className='particle';
+      p.style.left=Math.random()*100+'vw';
+      p.style.animationDuration=(12+Math.random()*12)+'s';
+      p.style.animationDelay=(Math.random()*0)+'s';
+      document.body.appendChild(p);
+      coldParticles.push(p);
+  }
+
+  const lanterna = document.querySelector('.lanterna');
+  document.addEventListener('mousemove', e => {
+    lanterna.style.top = `${e.clientY}px`;
+    lanterna.style.left = `${e.clientX}px`;
+  });
+
+  document.querySelector('.choice-btn1').addEventListener('click', () => {
+    document.body.classList.add('impacto');
+    setTimeout(() => document.body.classList.remove('impacto'), 500);
+  });
+
+  document.body.addEventListener('click', () => {
+    const audio = document.getElementById('bg-audio');
+    audio.play().catch(() => {});
+  }, { once: true });
+
+  let hotParticlesCreated = false;
+  let hotParticles = [];
+
+  window.addEventListener("scroll", () => {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+
+    if(scrollTop + windowHeight >= docHeight * 0.7){
+      document.body.classList.add("silksong");
+
+      coldParticles.forEach(p => p.style.display = "none");
+
+      if(!hotParticlesCreated){
+        for(let i=0;i<150;i++){
+          const p = document.createElement('div');
+          p.className = 'particle1';
+          p.style.left = Math.random()*100 + 'vw';
+          p.style.animationDuration = (5+Math.random()*10)+'s';
+          p.style.animationDelay = (Math.random()*5)+'s';
+          document.body.appendChild(p);
+          hotParticles.push(p);
+        }
+        hotParticlesCreated = true;
+      } else {
+        hotParticles.forEach(p => p.style.display = "block");
+      }
+
+    } else {
+      document.body.classList.remove("silksong");
+      coldParticles.forEach(p => p.style.display = "block");
+      hotParticles.forEach(p => p.style.display = "none");
+    }
+  });
+
+  //transição de imagens
+  // === Aparição ao rolar (Intersection Observer) ===
+const sections = document.querySelectorAll('.section');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+    } else {
+      entry.target.classList.remove('show'); // reaparece quando voltar
+    }
+  });
+}, { threshold: 0.25 });
+
+sections.forEach(section => observer.observe(section));
+
+</script>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(to bottom, #0b0b0f, #4a0a0a, #7a1212);
+  color: #ffdcdc;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 96%;
+  background: rgba(30, 0, 0, 0.85);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+header .logo {
+  font-family: "Cinzel", serif;
+  font-size: 1.4rem;
+  color: #ff8080;
+}
+
+header button {
+  background: none;
+  border: 2px solid #ff8080;
+  color: #ff8080;
+  font-size: 1rem;
+  margin-left: 10px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+header button:hover {
+  background: #ff8080;
+  color: #0b0b0f;
+  transform: scale(1.05);
+}
+
+main {
+  margin-top: 100px;
+  flex: 1;
+  padding: 20px;
+  text-align: center;
+}
+
+.titulo-arena {
+  font-family: "Cinzel", serif;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.intro-arena {
+  max-width: 600px;
+  margin: 0 auto 40px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.arena-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  justify-items: center;
+}
+
+.card {
+  background: rgba(50, 0, 0, 0.8);
+  border: 2px solid #a30000;
+  border-radius: 15px;
+  padding: 20px;
+  width: 260px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 25px rgba(255, 50, 50, 0.6);
+}
+
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  font-family: "Cinzel", serif;
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 0.95rem;
+  color: #ffdcdc;
+}
+
+.concluir-btn {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 2px solid #ff5050;
+  background: none;
+  color: #ff5050;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.concluir-btn:hover {
+  background: #ff5050;
+  color: #0b0b0f;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background: rgba(20, 0, 0, 0.9);
+  font-size: 0.9rem;
+}
+
+/* Cabeçalho */
+    header {
+      width: 97%;
+      padding: 12px 20px;
+      position: absolute;
+      top: 0;
+      left: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 10, 20, 0.4);
+      border-bottom: 1px solid #1e2230;
+      z-index: 1000;
+    }
+    
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d1d6ff;
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      text-shadow: 0 0 12px #7c8cff;
+    }
+
+    #logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #7c8cff;
+    }
+
+    .user-options {
+      display: flex;
+      gap: 16px;
+    }
+
+    .user-options button {
+      background: transparent;
+      border: 1px solid #4c4f66;
+      color: #b0b6d9;
+      font-size: 0.9rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: 6px;
+    }
+
+    .user-options button:hover {
+      border-color: #7c8cff;
+      color: #ffffff;
+      text-shadow: 0 0 8px #7c8cff;
+    }

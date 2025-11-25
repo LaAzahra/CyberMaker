@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - CyberMaker</title>
+  <link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+  <header>
+    <div class="logo">CyberMaker - Login</div>
+    <div class="user-options">
+      <button onclick="window.location.href='index.html'">Voltar</button>
+      <button onclick="window.location.href='registrar.html'">Registrar</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="login-container">
+      <h1>Acesso</h1>
+      <form id="loginForm">
+        <input type="email" id="username" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <button type="submit">Entrar</button>
+      </form>
+      <div class="back-button">
+        <a href="index.html"><button class="choice-btn"><span>Voltar ao Inicio</span></button></a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+ document.getElementById("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = document.getElementById("username").value.trim();
+  const senha = document.getElementById("password").value.trim();
+
+  try {
+    const res = await fetch("https://cybermakersite-production.up.railway.app/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, senha })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem("usuarioLogado", JSON.stringify(data.usuario));
+      alert("Login realizado!");
+      window.location.href = "index.html";
+      // Depois do login bem-sucedido
+fetch("https://cybermakersite-production.up.railway.app/api/usuarios/online", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ usuario_id: usuarioLogado.id })
+});
+
+    } else {
+      alert("Erro: " + data.error);
+    }
+  } catch (err) {
+    console.error("Erro na requisição:", err);
+    alert("Erro de conexão com o servidor!");
+  }
+});
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>A Comunidade — CyberMaker</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+  <style>
+    /* Tema branco/cinza inspirado em Hollow Knight: limpo, contrastes suaves */
+    :root {
+      --bg: #fbfbfd;
+      --muted: #9aa0a6;
+      --panel: #f3f4f6;
+      --dark: #22242a;
+      --accent: #8f98b3;
+      --border: #e6e7ea;
+    }
+    *{box-sizing:border-box}
+    body {
+      margin:0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 28px; border-bottom:1px solid var(--border);
+      background: linear-gradient(180deg,#ffffff,#f7f8fa);
+    }
+    header .brand { display:flex; gap:12px; align-items:center; }
+    header img.logo { width:44px; height:44px; border-radius:8px; object-fit:cover; }
+    header h1 { margin:0; font-family:Cinzel, serif; font-size:1.2rem; color:var(--accent); }
+    header nav a button { margin-left:8px; padding:8px 10px; border:1px solid var(--border); background:transparent; border-radius:8px; cursor:pointer; color:var(--muted); }
+
+    .container { max-width:1000px; margin:28px auto; padding:0 16px; display:grid; grid-template-columns:360px 1fr; gap:24px; }
+    .panel { background:var(--panel); border-radius:12px; padding:16px; border:1px solid var(--border); box-shadow: 0 6px 20px rgba(16,18,24,0.04); }
+    .sidebar .title { font-weight:700; color:var(--accent); margin-bottom:8px; }
+    .post-form label { font-weight:600; font-size:0.9rem; color:var(--dark); display:block; margin-top:10px; }
+    .post-form input[type="text"], .post-form textarea { width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:#fff; margin-top:6px; }
+    .post-form textarea { min-height:120px; resize:vertical; }
+    .post-form .row { display:flex; gap:8px; margin-top:12px; }
+    .btn { background:#2b2f36; color:#fff; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }
+    .btn.secondary { background:transparent; border:1px solid var(--border); color:var(--dark); }
+
+    .feed .post { background:#fff; border-radius:12px; padding:14px; margin-bottom:12px; border:1px solid var(--border); }
+    .post .post-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px; }
+    .post .title { font-weight:700; color:var(--dark); margin:0; }
+    .post .meta { color:var(--muted); font-size:0.85rem; }
+    .post img.content-img { width:100%; max-height:320px; object-fit:cover; border-radius:10px; margin-top:10px; }
+    .empty { text-align:center; color:var(--muted); padding:30px 0; }
+
+    @media (max-width:980px) {
+      .container { grid-template-columns: 1fr; }
+      header nav { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+     <img class= "logo" id="fotoPerfil" src="imagens/default.jpg" alt="Foto de perfil" >
+      <div>
+        <h1>A Comunidade</h1>
+        <div style="font-size:0.86rem;color:var(--muted)">Poste, compartilhe e discuta — imagem opcional</div>
+      </div>
+    </div>
+    <nav>
+      <a href="index.html"><button>Início</button></a>
+      <a href="arena.html"><button>Arena</button></a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <aside class="panel sidebar">
+      <div class="title">Criar post</div>
+      <form id="postForm" class="post-form" autocomplete="off">
+        <label for="title">Título</label>
+        <input id="title" name="title" type="text" placeholder="Um título forte..." required>
+
+        <label for="content">Conteúdo</label>
+        <textarea id="content" name="content" placeholder="Descreva sua ideia, projeto ou pergunta..." required></textarea>
+
+        <label for="image">Imagem (URL) — opcional</label>
+        <input id="image" name="image" type="text" placeholder="https://... (deixe em branco se não tiver)">
+
+        <div class="row">
+          <button type="submit" class="btn">Postar</button>
+          <button type="button" id="clearBtn" class="btn secondary">Limpar</button>
+        </div>
+      </form>
+
+      <div style="margin-top:18px; font-size:0.9rem; color:var(--muted)">
+        Dica: Use imagens já hospedadas (imgur, CDN) ou deixe em branco. Os posts ficam salvos no seu navegador (localStorage).
+      </div>
+    </aside>
+
+    <section class="feed">
+      <div class="panel" style="margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-weight:700; color:var(--accent)">Feed</div>
+          <div style="color:var(--muted); font-size:0.9rem">Ordenado por data (mais recentes primeiro)</div>
+        </div>
+      </div>
+
+      <div id="postsContainer"></div>
+    </section>
+  </main>
+
+ <script>
+
+    const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const fotoPerfil = document.getElementById("fotoPerfil");
+  const nomeUsuario = document.getElementById("nome-usuario");
+  const btnLogout = document.getElementById("btn-logout");
+
+  function atualizarHeader() {
+    if (usuarioLogado) {
+      nomeUsuario.textContent = usuarioLogado.nome;
+      fotoPerfil.src = usuarioLogado.foto || "imagens/default.jpg";
+    } else {
+      nomeUsuario.textContent = "CyberMaker";
+      fotoPerfil.src = "imagens/default.jpg";
+    }
+  }
+  atualizarHeader();
+  
+  const postsContainer = document.getElementById("postsContainer");
+  const form = document.getElementById("postForm");
+  const clearBtn = document.getElementById("clearBtn");
+
+  // Recuperando o usuário logado
+  let usuario =
+  JSON.parse(localStorage.getItem("usuario")) ||
+  JSON.parse(localStorage.getItem("user")) ||
+  JSON.parse(localStorage.getItem("usuarioLogado")) ||
+  JSON.parse(localStorage.getItem("perfil")) ||
+  JSON.parse(localStorage.getItem("authUser"));
+
+  if (!user || !user.id) {
+    alert("Você precisa fazer login para postar.");
+  }
+
+  async function carregarPosts() {
+    const res = await fetch("https://cybermakersite-production.up.railway.app/api/comunidade");
+    const posts = await res.json();
+    renderPosts(posts);
+  }
+
+  function renderPosts(posts) {
+    postsContainer.innerHTML = "";
+
+    if (!posts.length) {
+      postsContainer.innerHTML = '<div class="panel empty">Nenhum post ainda. Seja o primeiro! 🌙</div>';
+      return;
+    }
+
+    posts.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "post panel";
+      div.innerHTML = `
+        <div class="post-head">
+          <div>
+            <div class="title">${escapeHtml(p.titulo)}</div>
+            <div class="meta">por ${escapeHtml(p.autor_nome)} — ${new Date(p.data_criacao).toLocaleString()}</div>
+          </div>
+        </div>
+        <div class="body" style="margin-top:8px; color:#333;">${escapeHtml(p.texto).replace(/\n/g,'<br>')}</div>
+        ${p.imagem ? `<img class="content-img" src="${p.imagem}" alt="imagem do post">` : ""}
+      `;
+      postsContainer.appendChild(div);
+    });
+  }
+
+  function escapeHtml(str) {
+    return str?.replace(/[&<>"']/g, m => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[m])) || "";
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!user || !user.id) return alert("Você precisa fazer login.");
+
+    const titulo = form.title.value.trim();
+    const texto = form.content.value.trim();
+    const imagem = form.image.value.trim() || null;
+
+    if (!titulo || !texto) return alert("Título e conteúdo são obrigatórios.");
+
+    const res = await fetch("https://cybermakersite-production.up.railway.app/api/comunidade", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuario_id: user.id, titulo, texto, imagem })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      form.reset();
+      carregarPosts();
+      alert("🌙 Post publicado com sucesso! +10 pontos obtidos!");
+    } else {
+      alert("Erro ao publicar.");
+    }
+  });
+
+  clearBtn.addEventListener("click", () => form.reset());
+
+  carregarPosts();
+</script>
+
+</body>
+</html>

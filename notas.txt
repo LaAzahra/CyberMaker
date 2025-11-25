@@ -1,0 +1,43 @@
+digite o seguinte comando no terminal (view -> terminal) do VScode para iniciar servidor: 
+
+nodemon server.js
+
+para instalar:
+
+npm install
+npm install -g nodemon
+
+forçar o windows habilitar instalação:
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+
+código do banco de dados com nome CyberMaker e senha Automata:
+
+-- Criar banco de dados
+CREATE DATABASE IF NOT EXISTS cybermaker
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_general_ci;
+
+-- Usar o banco
+USE cybermaker;
+
+-- Criar tabela de usuários
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  senha VARCHAR(255) NOT NULL,
+  foto LONGTEXT NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ideias (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  titulo VARCHAR(200) NOT NULL,
+  categoria VARCHAR(100),
+  descricao TEXT NOT NULL,
+  img TEXT,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+select * from ideias
