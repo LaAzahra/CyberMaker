@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ranking - CyberMaker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=Cinzel:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#07080b; --card:#0f1116; --accent:#7c8cff; --muted:#9aa3d9;
+      --good:#7ef0a1; --danger:#ff7878;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#05060a 0%, #0b0710 60%);
+      color:#e8eefc;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
+
+    .container{
+      width:100%;
+      max-width:960px;
+      background:linear-gradient(180deg, rgba(18,18,34,0.6), rgba(10,8,16,0.6));
+      border:1px solid rgba(124,140,255,0.08);
+      border-radius:14px;
+      padding:20px;
+      box-shadow: 0 10px 30px rgba(7,6,12,0.6);
+      backdrop-filter: blur(6px);
+    }
+
+    header.top{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    header.top h1{
+      margin:0;
+      font-family:Cinzel, serif;
+      letter-spacing:1px;
+      font-size:1.6rem;
+      color:var(--accent);
+    }
+    header.top .controls{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .btn{
+      background:transparent;
+      border:1px solid rgba(124,140,255,0.12);
+      color:var(--muted);
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .btn.primary{
+      background:linear-gradient(90deg,var(--accent),#9fb4ff);
+      color:#071227;
+      border:none;
+    }
+
+    .list{
+      display:grid;
+      gap:10px;
+      margin-top:6px;
+    }
+
+    .card{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(124,140,255,0.04);
+      padding:12px;
+      border-radius:12px;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .card:hover{ transform:translateY(-4px); box-shadow:0 10px 30px rgba(12,8,30,0.45); }
+
+    .rank{
+      width:54px;
+      height:54px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      color:#071227;
+      background:linear-gradient(180deg,#fff 0%, #dfe8ff 100%);
+      flex-shrink:0;
+    }
+
+    .userpic{
+      width:54px; height:54px; border-radius:50%;
+      overflow:hidden; flex-shrink:0; border:2px solid rgba(255,255,255,0.06);
+      background:linear-gradient(90deg,#1a1a2e,#2b0a0a);
+      display:flex;align-items:center;justify-content:center;color:var(--muted);
+    }
+    .user-info{ flex:1; min-width:0; }
+    .user-info .name{ font-weight:700; font-size:1rem; color:#eaf0ff; display:flex; align-items:center; gap:8px;}
+    .user-info .sub{ font-size:0.85rem; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+    .points{
+      text-align:right;
+      min-width:120px;
+    }
+    .points .num{ font-weight:800; font-size:1.1rem; color:var(--good); }
+    .points .label{ font-size:0.78rem; color:var(--muted); }
+
+    .online-dot{
+      width:10px; height:10px; border-radius:50%;
+      box-shadow:0 0 8px rgba(0,0,0,0.3);
+      border:2px solid rgba(10,10,16,0.6);
+      margin-left:6px;
+    }
+    .online-yes{ background:var(--good); box-shadow:0 0 10px rgba(126,240,161,0.25); }
+    .online-no{ background:var(--danger); opacity:0.6; box-shadow:0 0 8px rgba(255,120,120,0.12); }
+
+    .you{
+      outline: 2px solid rgba(124,140,255,0.18);
+      box-shadow: 0 8px 30px rgba(124,140,255,0.06) inset;
+    }
+
+    .badge-top{
+      background: linear-gradient(90deg,#ffd26a,#ff9b6a);
+      color:#071227;
+      padding:4px 8px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:0.78rem;
+      margin-left:8px;
+    }
+
+    /* small helpers */
+    .muted-small{ color:var(--muted); font-size:0.9rem; }
+    .center{ display:flex; align-items:center; gap:8px; }
+
+    /* test area - simple form for mock users */
+    .mock-form{ display:flex; gap:8px; margin-top:16px; }
+    .mock-form input, .mock-form select{ padding:8px; border-radius:8px; border:1px solid rgba(124,140,255,0.06); background:transparent; color:inherit; }
+    .small{ font-size:0.85rem; padding:6px 10px;}
+    @media (max-width:600px){
+      .points{ min-width:80px; text-align:right; }
+      .rank{ width:44px; height:44px; font-size:0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <h1>Ranking — CyberMaker</h1>
+      <div class="controls">
+        <div class="muted-small">Atualiza a cada 5s</div>
+        <button class="btn" id="refreshBtn" title="Forçar atualização">Atualizar</button>
+      </div>
+    </header>
+
+    <section id="list" class="list" aria-live="polite">
+      <!-- cards gerados aqui -->
+    </section>
+
+    <!-- área para adicionar mocks (quando mock ativo) -->
+    <div id="mockArea" style="display:none; margin-top:12px;">
+      <div class="muted-small">Adicionar usuário (mock):</div>
+      <div class="mock-form">
+        <input id="mName" placeholder="Nome" />
+        <input id="mPoints" placeholder="Pontos" type="number" />
+        <select id="mOnline">
+          <option value="true">Online</option>
+          <option value="false">Offline</option>
+        </select>
+        <button class="small btn" id="addMock">Adicionar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ------------------- Config -------------------
+    // endpoint: altere para a URL do seu backend quando publicar:
+    const BACKEND_RANKING_ENDPOINT = "/api/ranking";
+    const POLL_INTERVAL_MS = 5000;
+
+    // ------------------- util -------------------
+    function el(tag, attrs={}, ...kids){
+      const e = document.createElement(tag);
+      for(const k in attrs){
+        if(k === 'cls') e.className = attrs[k];
+        else if(k === 'html') e.innerHTML = attrs[k];
+        else e.setAttribute(k, attrs[k]);
+      }
+      kids.forEach(k => { if(typeof k === 'string') e.appendChild(document.createTextNode(k)); else if(k) e.appendChild(k); });
+      return e;
+    }
+
+    // ------------------- state -------------------
+    let useMock = false;
+    const listEl = document.getElementById('list');
+    const mockArea = document.getElementById('mockArea');
+
+    // load logged user from localStorage if present
+    const usuarioLogado = (function(){
+      try { return JSON.parse(localStorage.getItem('usuarioLogado')); } catch(e){ return null; }
+    })();
+
+    // mock data stored in localStorage as fallback
+    function loadMock(){
+      try { return JSON.parse(localStorage.getItem('rankingMock')) || []; } catch(e){ return []; }
+    }
+    function saveMock(arr){ localStorage.setItem('rankingMock', JSON.stringify(arr)); }
+
+    // ------------------- rendering -------------------
+    function renderList(users){
+      listEl.innerHTML = '';
+      if(!users || users.length === 0){
+        listEl.appendChild(el('div', {cls:'muted-small center'}, 'Nenhum usuário encontrado.'));
+        return;
+      }
+
+      // sort by pontos desc
+      users.sort((a,b) => (b.pontos || 0) - (a.pontos || 0));
+
+      users.forEach((u, idx) => {
+        const isYou = usuarioLogado && (usuarioLogado.id === u.id || usuarioLogado.email === u.email || usuarioLogado.nome === u.nome);
+        const rankEl = el('div', {cls:'rank'}, String(idx+1));
+        // gold/silver/bronze for top 3
+        if(idx === 0) { rankEl.style.background = 'linear-gradient(90deg,#ffd966,#ff9b6a)'; }
+        else if(idx === 1) { rankEl.style.background = 'linear-gradient(90deg,#d7d7d7,#bfc7ff)'; color=''; }
+        else if(idx === 2) { rankEl.style.background = 'linear-gradient(90deg,#e7c79a,#e89b6a)'; }
+
+        const pic = el('div', {cls:'userpic'});
+        if(u.foto){
+          const i = document.createElement('img');
+          i.src = u.foto;
+          i.style.width = '100%'; i.style.height='100%'; i.style.objectFit='cover';
+          pic.appendChild(i);
+        } else {
+          // initials
+          const initials = (u.nome || 'U').split(' ').map(s => s[0]).slice(0,2).join('').toUpperCase();
+          pic.appendChild(el('div', {cls:'muted-small'}, initials));
+        }
+
+        const name = el('div', {cls:'name'}, u.nome || 'Usuário');
+        if(idx === 0) name.appendChild(el('span', {cls:'badge-top'}, 'TOP'));
+        if(isYou) name.appendChild(el('span', {cls:'muted-small'}, ' • Você'));
+
+        const sub = el('div', {cls:'sub'}, (u.online ? 'Online' : 'Offline'));
+
+        const info = el('div', {cls:'user-info'}, name, sub);
+
+        const onlineDot = el('div', {cls: 'online-dot ' + (u.online ? 'online-yes' : 'online-no')});
+
+        const pointsBlock = el('div', {cls:'points'},
+          el('div', {cls:'num'}, String(u.pontos || 0)),
+          el('div', {cls:'label'}, 'pontos')
+        );
+
+        const card = el('div', {cls: 'card ' + (isYou? 'you' : '')}, rankEl, pic, info, onlineDot, pointsBlock);
+        listEl.appendChild(card);
+      });
+    }
+
+    // ------------------- data fetch -------------------
+    async function fetchRanking(){
+      if(useMock){
+        const data = loadMock();
+        renderList(data);
+        return data;
+      }
+
+      try {
+        const res = await fetch(BACKEND_RANKING_ENDPOINT, {cache:'no-store'});
+        if(!res.ok) throw new Error('status ' + res.status);
+        const json = await res.json();
+        // normalize fields: {id, nome, foto, pontos, online}
+        const users = json.map(u => ({
+          id: u.id ?? u.userId ?? null,
+          nome: u.nome ?? u.name ?? u.username ?? 'Usuário',
+          foto: u.foto ?? u.avatar ?? null,
+          pontos: Number(u.pontos ?? u.points ?? 0),
+          online: Boolean(u.online ?? true)
+        }));
+        renderList(users);
+        return users;
+      } catch(err){
+        // fallback to mock if endpoint fails
+        console.warn('Falha ao buscar ranking:', err);
+        const data = loadMock();
+        renderList(data);
+        return data;
+      }
+    }
+
+    // ------------------- controls -------------------
+    document.getElementById('refreshBtn').addEventListener('click', () => fetchRanking());
+
+    document.getElementById('toggleMock').addEventListener('click', (e) => {
+      useMock = !useMock;
+      e.currentTarget.classList.toggle('primary', useMock);
+      mockArea.style.display = useMock ? 'block' : 'none';
+      fetchRanking();
+    });
+
+    document.getElementById('addMock').addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const name = document.getElementById('mName').value.trim() || 'Usuário';
+      const pts = Number(document.getElementById('mPoints').value) || 0;
+      const on = document.getElementById('mOnline').value === 'true';
+      const arr = loadMock();
+      arr.push({ id: Date.now(), nome: name, pontos: pts, online: on, foto: null });
+      saveMock(arr);
+      document.getElementById('mName').value = '';
+      document.getElementById('mPoints').value = '';
+      fetchRanking();
+    });
+
+    // ------------------- initial run + polling -------------------
+    fetchRanking();
+    setInterval(fetchRanking, POLL_INTERVAL_MS);
+
+    // expose for debug
+    window._ranking = { fetchRanking, renderList };
+  </script>
+</body>
+</html>

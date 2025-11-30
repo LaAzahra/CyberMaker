@@ -1,0 +1,412 @@
+ body {
+  position: relative;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at center, #0a0a12 0%, #000000 100%);
+  color: #ffd8d8;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto; /* <-- libera a rolagem vertical */
+  overflow-x: hidden; /* <-- evita rolagem lateral */
+  transition: transform 0.2s ease;
+  transition: background 2s, color 2s;
+}
+/* Transição estilo Silksong */
+    body.silksong {
+      background: linear-gradient(to bottom, #0b0b0f, #000000, #7a1212);
+      color: #ffdcdc;
+    }
+
+    .page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+    /* Efeito de impacto */
+    body.impacto {
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0px, 0px); }
+      20% { transform: translate(-10px, 0px); }
+      40% { transform: translate(10px, 0px); }
+      60% { transform: translate(-6px, 0px); }
+      80% { transform: translate(6px, 0px); }
+      100% { transform: translate(0px, 0px); }
+    }
+    .stay-here{
+       height: 100vh;
+    }
+    /* Cabeçalho */
+    header {
+      width: 97%;
+      padding: 12px 20px;
+      position: absolute;
+      top: 0;
+      left: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 10, 20, 0.4);
+      border-bottom: 1px solid #1e2230;
+      z-index: 1000;
+    }
+    
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d1d6ff;
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      text-shadow: 0 0 12px #7c8cff;
+    }
+
+    #logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #7c8cff;
+    }
+
+    .user-options {
+      display: flex;
+      gap: 16px;
+    }
+
+    /* style anchors in header as buttons (safer than <button> inside <a>) */
+    .user-options a, .user-options .user-btn {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid #4c4f66;
+      color: #b0b6d9;
+      font-size: 0.95rem;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      text-decoration: none;
+      margin-left: 6px;
+    }
+
+    .user-options a:hover, .user-options .user-btn:hover {
+      border-color: #7c8cff;
+      color: #ffffff;
+      text-shadow: 0 0 8px #7c8cff;
+      background: rgba(124,140,255,0.04);
+    }
+
+    /* Luz tipo lanterna */
+    .lanterna {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(200, 220, 255, 0.2) 0%, rgba(0,0,0,0.95) 70%);
+      mix-blend-mode: screen;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+    }
+
+    /* Vignette suave (circulo escuro envolta do site) */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 60%, #000 100%);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+      /* Partículas1 */
+    .particle1 {
+      position: fixed;
+      top: -10px;
+      width: 4px;
+      height: 4px;
+      background: radial-gradient(circle, #ff6600, rgba(255, 0, 0, 0.2));
+      border-radius: 50%;
+      pointer-events: none;
+      animation: fall linear infinite, flicker 1.5s infinite;
+      opacity: 0.8;
+      z-index: 0;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 0.9; }
+      50% { opacity: 0.4; }
+    }
+      /* Tremor */
+    .impacto {
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+
+    /* Partículas */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #7c8cff;
+      border-radius: 50%;
+      opacity: 0.7;
+      box-shadow: 0 0 12px #7c8cff, 0 0 24px #9faeff;
+      animation: drift 16s linear infinite;
+    }
+
+    @keyframes drift {
+  from { transform: translateY(110vh) scale(0.6); opacity: 0; }
+  10% { opacity: 1; }
+  to { transform: translateY(-120vh) scale(1); opacity: 0; }
+}
+
+    /* Título */
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 3rem;
+      color: #d1d6ff;
+      text-shadow: 0 0 15px #7c8cff, 0 0 40px #9faeff88;
+      margin-bottom: 16px;
+      z-index: 20;
+      margin-top: 120px;
+    }
+       /* Seções explicativas */
+    .section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 20px;
+      text-align: center;
+      transition: opacity 1s ease;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .section img {
+      max-width: 500px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    /* Icon images used in the intro sections (Diário / Arena) */
+    .icon-img {
+      width: 360px; /* increased for readability */
+      max-width: 60vw;
+      height: auto;
+      display: block;
+      margin: 0 auto 24px auto;
+    }
+
+    @media (min-width: 1400px) {
+      .icon-img { width: 520px; max-width: 36vw; }
+    }
+
+    @media (min-width: 1000px) and (max-width: 1399px) {
+      .icon-img { width: 420px; max-width: 40vw; }
+    }
+
+    @media (max-width: 520px) {
+      .icon-img { width: 220px; max-width: 60vw; }
+      .choice-btn, .choice-btn1 { padding: 14px 26px; font-size: 1rem; }
+      h1 { font-size: 1.9rem; }
+      p.intro { font-size: 1.05rem; }
+    }
+
+    /* Typography bump for readability on larger screens */
+    @media (min-width: 900px) {
+      h1 { font-size: 3.8rem; }
+      p.intro { font-size: 1.4rem; max-width: 820px; }
+      .choice-btn, .choice-btn1 { padding: 20px 56px; font-size: 1.2rem; }
+    }
+
+    .section h2 {
+      font-family: "Cinzel", serif;
+      margin-bottom: 12px;
+      font-size: 2rem;
+    }
+
+    p.intro {
+      max-width: 720px;
+      text-align: center;
+      font-size: 1.2rem;
+      color: #a0a8d0;
+      margin-bottom: 48px;
+      line-height: 1.6;
+      z-index: 20;
+    }
+    
+
+    /* Botões */
+    .choices {
+      display: flex;
+      gap: 50px;
+      z-index: 20;
+    }
+
+    .choice-btn, .choice-btn1 {
+      padding: 18px 46px;
+      font-size: 1.1rem;
+      font-family: 'Cinzel', serif;
+      text-transform: uppercase;
+      background: #0a0a14;
+      border: 2px solid #4c4f66;
+      color: #b0b6d9;
+      border-radius: 12px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      position: relative;
+      transition: all 0.35s ease;
+      overflow: hidden;
+    }
+
+    .choice-btn:hover {
+      border-color: #7c8cff;
+      color: #ffffff;
+      box-shadow: 0 0 25px #7c8cff, 0 0 50px #9faeff;
+      transform: scale(1.1);
+    }
+    .choice-btn1:hover{
+      border-color: #ff7c7c;
+      color: #ff0000;
+      box-shadow: 0 0 25px #ff7c7c, 0 0 50px #ff9f9f;
+      transform: scale(1.1);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 18px;
+      color: #666699;
+      font-size: 0.9rem;
+      text-align: center;
+      z-index: 20;
+    }
+/*feixes de luz opcional*/
+    .light-beam {
+  position: fixed;
+  top: -50%;
+  width: 2px;
+  height: 200%;
+  background: linear-gradient(to bottom, rgba(200,220,255,0.05), rgba(200,220,255,0.2), rgba(200,220,255,0.05));
+  pointer-events: none;
+  animation: beamMove linear infinite;
+  opacity: 0.5;
+  z-index: 0;
+}
+
+@keyframes beamMove {
+  0% { transform: translateY(0) rotate(10deg); }
+  50% { transform: translateY(20vh) rotate(-10deg); }
+  100% { transform: translateY(0) rotate(10deg); }
+}
+/*login*/
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 100px;
+            z-index: 20;
+        }
+
+        .login-container h1 {
+            text-align: center;
+        }
+        
+        .login-container form {
+            background: rgba(20, 20, 35, 0.7);
+            padding: 28px;
+            border-radius: 12px;
+            border: 1px solid #2c2f44;
+            box-shadow: 0 0 20px #0a0a12;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .login-container input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #4c4f66;
+            background: #0a0a14;
+            color: #e0e6ff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        .login-container input:focus {
+            outline: none;
+            border-color: #7c8cff;
+            box-shadow: 0 0 8px #7c8cff;
+        }
+
+        .login-container button {
+            padding: 12px;
+            font-size: 1rem;
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            background: #0a0a14;
+            border: 2px solid #4c4f66;
+            color: #b0b6d9;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-container button:hover {
+            border-color: #7c8cff;
+            color: #fff;
+            box-shadow: 0 0 20px #7c8cff;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+                /* quando visível */
+        .section.show {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* variações (para diversificar) */
+        .fade-up    { transform: translateY(50px); }
+        .fade-left  { transform: translateX(-50px); }
+        .fade-right { transform: translateX(50px); }
+        .fade-zoom  { transform: scale(0.85); }
+
+        .section.show.fade-up,
+        .section.show.fade-left,
+        .section.show.fade-right,
+        .section.show.fade-zoom {
+          transform: none;
+          opacity: 1;
+        }

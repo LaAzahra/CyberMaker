@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diário - CyberMaker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/index.css"/>
+
+  <style>
+ body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: radial-gradient(circle at center, #0a0a12 0%, #000000 100%);
+      color: #e0e6ff;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-family: 'Cinzel', serif;
+      color: #d1d6ff;
+      text-shadow: 0 0 12px #7c8cff;
+      letter-spacing: 3px;
+    }
+
+    .user-options {
+      display: flex;
+      gap: 16px;
+    }
+
+    .user-options button {
+      background: transparent;
+      border: 1px solid #4c4f66;
+      color: #b0b6d9;
+      font-size: 0.9rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .user-options button:hover {
+      border-color: #7c8cff;
+      color: #ffffff;
+      text-shadow: 0 0 8px #7c8cff;
+    }
+
+    .lanterna {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(200, 220, 255, 0.2) 0%, rgba(0,0,0,0.95) 70%);
+      mix-blend-mode: screen;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 60%, #000 100%);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #7c8cff;
+      border-radius: 50%;
+      opacity: 0.7;
+      box-shadow: 0 0 12px #7c8cff, 0 0 24px #9faeff;
+      animation: drift 16s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes drift {
+      from { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      20% { opacity: 0.9; }
+      to { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    main {
+      margin-top: 100px;
+      width: 100%;
+      max-width: 800px;
+      z-index: 20;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.4rem;
+      text-align: center;
+      color: #d1d6ff;
+      text-shadow: 0 0 15px #7c8cff, 0 0 40px #9faeff88;
+      margin-bottom: 24px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: rgba(20, 20, 35, 0.7);
+      padding: 28px;
+      border-radius: 12px;
+      border: 1px solid #2c2f44;
+      box-shadow: 0 0 20px #0a0a12;
+      width: 100%;
+    }
+
+    label {
+      font-size: 1rem;
+      color: #c0c6ff;
+    }
+
+    input, select, textarea {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #4c4f66;
+      background: #0a0a14;
+      color: #e0e6ff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      resize: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #7c8cff;
+      box-shadow: 0 0 8px #7c8cff;
+    }
+
+    button {
+      padding: 12px;
+      font-size: 1rem;
+      font-family: 'Cinzel', serif;
+      text-transform: uppercase;
+      background: #0a0a14;
+      border: 2px solid #4c4f66;
+      color: #b0b6d9;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      border-color: #7c8cff;
+      color: #fff;
+      box-shadow: 0 0 20px #7c8cff;
+    }
+
+    .historico {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .bloco-ideia {
+      background: rgba(15, 15, 30, 0.85);
+      border: 1px solid #2c2f44;
+      border-left: 6px solid #7c8cff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 12px rgba(124, 140, 255, 0.4);
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .bloco-ideia h3 {
+      margin: 0 0 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: #d1d6ff;
+    }
+
+    .bloco-ideia p {
+      margin: 4px 0;
+      color: #b0b6d9;
+      font-size: 0.95rem;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      margin: 40px 0;
+      color: #666699;
+      font-size: 0.9rem;
+      text-align: center;
+      z-index: 20;
+    }
+
+  </style>
+  
+</head>
+<body>
+  <header>
+    <div class="logo" id="logo">
+  <img id="fotoPerfil" src="default.png" alt="Foto de perfil" width="100" style="border-radius:50%; cursor:pointer;">
+  <button id="btn-logout">Sair</button>
+  <span id="nome-usuario">CyberMaker</span>
+</div>
+
+  </header>
+
+  <div class="vignette"></div>
+  <div class="lanterna"></div>
+
+  <main>
+    <h1>CyberDiário</h1>
+
+    <form id="formIdeia">
+      <label for="titulo">Título da Ideia:</label>
+      <input type="text" id="titulo" name="titulo" placeholder="Digite um título...">
+
+      <label for="categoria">Categoria:</label>
+      <select id="categoria" name="categoria">
+        <option value="sustentavel">Sustentável</option>
+        <option value="economico">Econômico</option>
+        <option value="divertido">Divertido</option>
+        <option value="outros">Outros</option>
+      </select>
+
+      <label for="descricao">Descrição:</label>
+      <textarea id="descricao" name="descricao" rows="5" placeholder="Descreva sua ideia..."></textarea>
+
+      <button type="submit">Guardar no Diário</button>
+    </form>
+    <br>
+    <div class="choices">
+      <a href="../assets/html/index.html"> <button class="choice-btn"><span>Voltar ao Inicio</span></button> </a>
+      <a href="../assets/html/arena.html"> <button class="choice-btn1"><span>Entrar na Arena</span></button> </a>
+     </div><br><br><br>
+     <a href = "../assets/html/registro.html"> </a>
+
+    <section class="historico" id="historico">
+      <!-- Blocos de ideias aparecerão aqui -->
+    </section>
+  </main>
+
+  <footer>
+    © 2025 CyberMaker.
+  </footer>
+
+<script>
+  // partículas
+  for (let i = 0; i < 100; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (12 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    document.body.appendChild(p);
+  }
+
+  // lanterna
+  const lanterna = document.querySelector('.lanterna');
+  document.addEventListener('mousemove', e => {
+    lanterna.style.top = `${e.clientY}px`;
+    lanterna.style.left = `${e.clientX}px`;
+  });
+
+  // salvar ideias no histórico
+  const form = document.getElementById('formIdeia');
+  const historico = document.getElementById('historico');
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  // Carregar ideias do usuário logado
+  async function carregarIdeias() {
+    historico.innerHTML = "";
+    if (!usuarioLogado) return;
+
+    const res = await fetch(`https://cybermakersite-production.up.railway.app/api/ideias`);
+    const ideias = await res.json();
+
+    ideias.forEach(ideia => {
+      const bloco = document.createElement("div");
+      bloco.className = "bloco-ideia";
+      bloco.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <img src="${usuarioLogado.foto || 'https://via.placeholder.com/40'}"
+               alt="foto autor" width="40" height="40" style="border-radius:50%;">
+          <strong>${usuarioLogado.nome}</strong>
+        </div>
+        <h3>${ideia.titulo}</h3>
+        <p><strong>Categoria:</strong> ${ideia.categoria}</p>
+        <p>${ideia.descricao}</p>
+      `;
+      historico.appendChild(bloco);
+    });
+  }
+
+  // Salvar ideia no banco
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!usuarioLogado) {
+      alert("Você precisa estar logado para salvar ideias!");
+      return;
+    }
+
+    const titulo = document.getElementById('titulo').value.trim();
+    const categoria = document.getElementById('categoria').value;
+    const descricao = document.getElementById('descricao').value.trim();
+
+    const res = await fetch("https://cybermakersite-production.up.railway.app/api/ideias", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        usuario_id: usuarioLogado.id,
+        titulo,
+        categoria,
+        descricao
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("Ideia guardada com sucesso!");
+      form.reset();
+      carregarIdeias();
+    } else {
+      alert("Erro: " + data.error);
+    }
+  });
+
+  carregarIdeias();
+</script>
+
+</body>
+</html>

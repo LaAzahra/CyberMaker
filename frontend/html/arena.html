@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arena - CyberMaker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+  <script src="script.js"></script>
+  <link rel="stylesheet" href="../assets/css/arena.css"/>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #0d0d0f, #2a0000);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(20, 0, 0, 0.8);
+      border-bottom: 2px solid #a30000;
+      font-family: 'Cinzel', serif;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      color: #ff3030;
+      text-shadow: 0 0 10px #ff5050;
+    }
+
+    .arena-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 3rem;
+    }
+
+    .card {
+      background: rgba(40, 0, 0, 0.85);
+      border: 2px solid #ff3c00;
+      border-radius: 15px;
+      padding: 1rem;
+      box-shadow: 0 0 15px rgba(255, 60, 0, 0.7);
+      cursor: pointer;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255, 80, 0, 1);
+    }
+
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 0.8rem;
+    }
+
+    .card h3 {
+      font-family: 'Cinzel', serif;
+      margin: 0.5rem 0;
+      font-size: 1.3rem;
+      color: #ff8080;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #f2c6c6;
+    }
+
+    .concluir-btn {
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      background: #ff3030;
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .concluir-btn:hover {
+      background: #ff5050;
+      transform: scale(1.05);
+    }
+
+    /* Modal para concluir projeto */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #1a0000;
+      padding: 2rem;
+      border-radius: 15px;
+      border: 2px solid #ff3030;
+      box-shadow: 0 0 20px rgba(255,60,0,0.9);
+      max-width: 500px;
+      width: 90%;
+      text-align: left;
+    }
+
+    .modal-content h2 {
+      font-family: 'Cinzel', serif;
+      color: #ff5050;
+      margin-bottom: 1rem;
+    }
+
+    .modal-content label {
+      display: block;
+      margin: 0.5rem 0 0.2rem;
+    }
+
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .close-btn {
+      margin-top: 1rem;
+      background: #222;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid #555;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(20,0,0,0.8);
+      border-top: 2px solid #a30000;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" id="logo">
+        <img id="fotoPerfil" src="imagens/void.jpg" alt="Foto de perfil" >
+        <button id="btn-logout">Sair</button>
+        <span id="nome-usuario">CyberMaker</span>
+     </div>
+    
+    <nav>
+      <a href="../assets/html/index.html"><button> Início</button></a>
+      <a href="../assets/html/diario.html"><button> Diário</button></a>
+    </nav>
+  </header>
+
+  <div class="arena-container" id="arena">
+    <!-- As cartas serão carregadas do localStorage -->
+  </div>
+
+  <!-- Modal para concluir projeto -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h2>Concluir Projeto</h2>
+      <form id="concluir-form">
+        <label for="video">Link do vídeo:</label>
+        <input type="url" id="video" name="video" required>
+
+        <label for="imagens">Imagens (links separados por vírgula):</label>
+        <input type="text" id="imagens" name="imagens" required>
+
+        <label for="descricao">Descrição do processo:</label>
+        <textarea id="descricao" name="descricao" rows="4" required></textarea>
+
+        <button type="submit" class="concluir-btn">Postar Conclusão</button>
+        <button type="button" class="close-btn" onclick="fecharModal()">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    2025 CyberMaker - Ecos da Arena
+  </footer>
+
+  <script>
+  const arena = document.getElementById("arena");
+
+  async function carregarIdeias() {
+    arena.innerHTML = "";
+    const res = await fetch("https://cybermakersite-production.up.railway.app/api/ideias");
+    const ideias = await res.json();
+
+    ideias.forEach((ideia, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <img src="${ideia.foto_autor || 'https://via.placeholder.com/40'}"
+               alt="foto autor" width="40" height="40" style="border-radius:50%;">
+          <strong>${ideia.autor}</strong>
+        </div>
+        <img src="${ideia.img || 'https://via.placeholder.com/300x150/550000/ffffff?text=Ideia'}" alt="imagem ideia">
+        <h3>${ideia.titulo}</h3>
+        <p>${ideia.descricao}</p>
+        <button class="concluir-btn" onclick="abrirModal(${index})">Concluir</button>
+      `;
+      arena.appendChild(card);
+    });
+  }
+
+  function abrirModal(index) {
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("concluir-form").onsubmit = (e) => {
+      e.preventDefault();
+      alert("Projeto concluído e registrado com sucesso! 🌑🔥");
+      fecharModal();
+    };
+  }
+
+  function fecharModal() {
+    document.getElementById("modal").style.display = "none";
+  }
+
+  carregarIdeias();
+</script>
+
+</body>
+</html>

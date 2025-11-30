@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberMaker</title>
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/index.css"/>
+  <style>
+    /* botão logout só aparece ao passar o mouse na foto */
+
+    #btn-logout {
+      display: none;
+      position: absolute;
+      top: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #a30000;
+      border: none;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .logo:hover #btn-logout {
+      display: block;
+    }
+
+    .logo {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #fotoPerfil {
+      border-radius: 50%;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border: 2px solid #7c8cff;
+    }
+  </style>
+</head>
+
+
+<body>
+  <div class="page">
+  <header>
+
+     <div class="logo" id="logo">
+        <img id="fotoPerfil" src="assets/img/default.jpg" alt="Foto de perfil" >
+        <button id="btn-logout">Sair</button>
+        <span id="nome-usuario">CyberMaker</span>
+     </div>
+     
+  <div class="user-options" id="user-options">
+   <a class="user-btn" href="html/inicio.html">Início</a>
+    <a class="user-btn" href="html/login.html">Login</a>
+    <a class="user-btn" href="html/registrar.html">Registrar</a>
+  </div>
+
+  </header>
+
+  <div class="vignette"></div>
+  <div class="lanterna"></div>
+
+  <h1>CyberMaker</h1>
+  <p class="intro">
+    Programamos nas sombras para servir a luz, neste domínio, <strong>guarde suas ideias</strong> no Diário,
+    ou <strong>enfrente a Arena</strong>, onde elas se tornam reais, competem por pontos e ecoam entre
+    aqueles que buscam inovação. Sua decisão moldará seu caminho.
+  </p>
+
+  <!--Botões-->
+  <div class="choices">
+   <a href="html/diario.html"> <button class="choice-btn" id="btn-diario"><span>Diário</span></button> </a>
+   <a href="html/arena.html"> <button class="choice-btn1" id="btn-arena"><span>Arena</span></button> </a>
+  </div>
+
+  <!-- Seções explicativas -->
+  <div class="section">
+    <img class="icon-img" src="assets/img/ideias.png" alt="Diário" onerror="this.onerror=null;this.src='https://via.placeholder.com/520?text=Ideias'">
+    <h2>O Diário</h2>
+    <p>O Diário é o coração do abismo: um espaço íntimo onde você guarda suas
+      inspirações, esboços de projetos e rascunhos de invenções. Cada anotação
+      registrada é uma centelha de luz preservada na escuridão.  
+      Aqui, nada se perde: suas ideias são armazenadas em segurança e podem ser
+      revisitadas, aprimoradas e preparadas para o momento certo de emergirem.</p>
+  </div>
+
+  <div class="section">
+    <img class="icon-img" src="assets/img/arena.png" alt="Arena" onerror="this.onerror=null;this.src='https://via.placeholder.com/520?text=Arena'">
+    <h2>A Arena</h2>
+    <p> A Arena é o campo onde o conceito encontra a ação.  
+      Cada ideia registrada no Diário pode ser convocada como um desafio, exibida
+      como uma carta única de conhecimento e confrontada com a realidade.
+      Para marcar uma vitória, é necessário apresentar provas: imagens, vídeos e
+      instruções detalhadas que permitam que qualquer outro explorador recrie
+      o que você realizou.  
+      Assim, sua ideia não apenas sobrevive, mas inspira toda a comunidade.</p>
+  </div>
+
+  <div class="section">
+    <img class="section-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvoD2BWq4qAzsRp1y3OM2vKX5-okewx7zieg&s" alt="Comunidade">
+    <h2>A Comunidade</h2>
+    <p>No subsolo do CyberMaker não se caminha sozinho.  
+      A comunidade é formada por outros criadores que compartilham descobertas,
+      colaboram em projetos e competem de forma saudável na Arena.  
+      Cada conexão é como uma corrente de luz entre abismos distantes, expandindo
+      o alcance das ideias e fortalecendo todos os envolvidos.</p>
+  </div>
+
+  <!--Barra inferior-->
+  <footer>
+     2025 CyberMaker - Um mundo infinito de projetos.
+  </footer>
+
+  <!-- Áudio ambiente -->
+  <audio id="bg-audio" autoplay loop>
+    <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_1e57d4f624.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Script -->
+  
+ <script>
+  let usuarioLogado = null;
+  try { usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); } catch(e){ usuarioLogado = null; }
+  const fotoPerfil = document.getElementById("fotoPerfil");
+  const nomeUsuario = document.getElementById("nome-usuario");
+  const btnLogout = document.getElementById("btn-logout");
+
+  function atualizarHeader(){
+    if(usuarioLogado){
+      nomeUsuario.textContent = usuarioLogado.nome;
+      fotoPerfil.src = usuarioLogado.foto || "assets/img/default.jpg";
+      btnLogout.style.display = "";
+    } else {
+      nomeUsuario.textContent = "CyberMaker";
+      fotoPerfil.src = "assets/img/default.jpg";
+      btnLogout.style.display = "none";
+    }
+  }
+
+  if(btnLogout) btnLogout.addEventListener("click", ()=>{
+    if(usuarioLogado && usuarioLogado.id){
+      fetch('/api/usuarios/online', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ usuario_id: usuarioLogado.id }) }).catch(()=>{});
+    }
+    localStorage.removeItem('usuarioLogado');
+    usuarioLogado = null;
+    atualizarHeader();
+    alert('Você saiu da conta!');
+    window.location.href = 'html/login.html';
+  });
+
+  atualizarHeader();
+
+  // partículas
+  let coldParticles = [];
+  for(let i=0;i<250;i++){
+      const p=document.createElement('div');
+      p.className='particle';
+      p.style.left=Math.random()*100+'vw';
+      p.style.animationDuration=(12+Math.random()*12)+'s';
+      p.style.animationDelay=(Math.random()*0)+'s';
+      document.body.appendChild(p);
+      coldParticles.push(p);
+  }
+
+  const lanterna = document.querySelector('.lanterna');
+  if(lanterna) document.addEventListener('mousemove', e=>{ lanterna.style.top = `${e.clientY}px`; lanterna.style.left = `${e.clientX}px`; });
+
+  const choiceBtn1 = document.querySelector('.choice-btn1');
+  if(choiceBtn1) choiceBtn1.addEventListener('click', ()=>{ document.body.classList.add('impacto'); setTimeout(()=>document.body.classList.remove('impacto'), 500); });
+
+  document.body.addEventListener('click', ()=>{ const audio = document.getElementById('bg-audio'); audio.play().catch(()=>{}); }, { once: true });
+
+  let hotParticlesCreated = false; let hotParticles = [];
+  window.addEventListener('scroll', ()=>{
+    const scrollTop = window.scrollY; const windowHeight = window.innerHeight; const docHeight = document.documentElement.scrollHeight;
+    if(scrollTop + windowHeight >= docHeight * 0.7){
+      document.body.classList.add('silksong');
+      coldParticles.forEach(p=>p.style.display='none');
+      if(!hotParticlesCreated){
+        for(let i=0;i<150;i++){ const p=document.createElement('div'); p.className='particle1'; p.style.left = Math.random()*100 + 'vw'; p.style.animationDuration = (5+Math.random()*10)+'s'; p.style.animationDelay=(Math.random()*5)+'s'; document.body.appendChild(p); hotParticles.push(p); }
+        hotParticlesCreated = true;
+      } else { hotParticles.forEach(p=>p.style.display='block'); }
+    } else {
+      document.body.classList.remove('silksong'); coldParticles.forEach(p=>p.style.display='block'); hotParticles.forEach(p=>p.style.display='none');
+    }
+  });
+</script>
+
+  </div>
+</body>
+</html>
