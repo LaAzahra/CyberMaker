@@ -13,27 +13,24 @@ const app = express();
 // Health route for Railway
 app.get("/", (req, res) => res.send("OK"));
 
-app.use(express.json());
 app.use(cors());
-app.use(cors());
-app.use(express.json({ limit: "10mb" })); // allow image uploads as base64
+app.use(express.json({ limit: "10mb" }));
 
 // 🔧 Configuração do banco de dados
 // Se DB_POST existir, usa ele (Railway); senão usa as variáveis locais
 let pool;
 
-if (process.env.DB_POST) {
-  console.log("🌍 Usando variável DB_POST para conexão ao banco do Railway!");
+if (process.env.DATABASE_URL) {
+  console.log("🌍 Usando variável DB_POST para conexão ao banco!");
 
   try {
-    const dbUrl = new URL(process.env.DB_POST);
-
+  const dbUrl = new URL(process.env.DATABASE_URL);
     pool = mysql.createPool({
       host: dbUrl.hostname,
       user: dbUrl.username,
       password: dbUrl.password,
       database: dbUrl.pathname.replace("/", ""),
-      port: Number(dbUrl.port) || 51980,
+      port: Number(dbUrl.port) || 3306,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
@@ -217,7 +214,7 @@ app.post("/api/ideias", async (req, res) => {
 //histórico de conclusões
 app.get("/api/historico", async (req, res) => {
   try {
-    const [dados] = await db.execute(
+    const [dados] = await pool.query(
       "SELECT * FROM conclusoes ORDER BY data DESC"
     );
     res.json(dados);
@@ -226,17 +223,6 @@ app.get("/api/historico", async (req, res) => {
     res.status(500).json({ erro: "Falha ao buscar histórico" });
   }
 });
-
-
-// Fallback para index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log("🚀 Servidor rodando na porta", PORT);
-});
-
 
 // Salvar conclusão da arena
 app.post("/api/conclusoes", async (req, res) => {
@@ -259,3 +245,13 @@ app.post("/api/conclusoes", async (req, res) => {
     res.status(500).json({ success: false, error: "Erro interno no servidor" });
   }
 });
+
+// Fallback para index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.listen(PORT, () => {
+  console.log("🚀 Servidor rodando na porta", PORT);
+});
+
