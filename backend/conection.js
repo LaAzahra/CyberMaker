@@ -1,24 +1,20 @@
-import mysql from "mysql2/promise";
+const createUsersTable = `CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    tipo_usuario ENUM('recrutador','usuario') NOT NULL DEFAULT 'usuario',
+    
+    -- Campos de Segurança (Confirmação de Email)
+    token_confirmacao VARCHAR(255), 
+    confirmado BOOLEAN DEFAULT FALSE, 
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT) || 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+    -- Campos de Perfil/Ranking
+    foto LONGTEXT,
+    pontos INT DEFAULT 0,
+    online BOOLEAN DEFAULT FALSE,
+    
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);`;
 
-// Teste automático de conexão ao iniciar
-pool.getConnection()
-  .then(conn => {
-    console.log("✅ MySQL conectado com sucesso");
-    conn.release();
-  })
-  .catch(err => {
-    console.error("❌ Erro MySQL:", err.message);
-  });
-
-export default pool;
+module.exports = createUsersTable;
