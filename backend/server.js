@@ -187,6 +187,39 @@ app.get("/api/ideias", async (req, res) => {
     res.status(500).json({ success: false, error: "Erro interno" });
   }
 });
+app.post("/api/registrar", async (req, res) => {
+  const { nome, email, senha, foto } = req.body;
+
+  if (!nome || !email || !senha) {
+    return res.json({ success: false, error: "Campos obrigatórios faltando" });
+  }
+
+  try {
+    const conn = await pool.getConnection();
+
+    const [existe] = await conn.query(
+      "SELECT id FROM usuarios WHERE email = ?",
+      [email]
+    );
+
+    if (existe.length > 0) {
+      conn.release();
+      return res.json({ success: false, error: "Email já registrado" });
+    }
+
+    await conn.query(
+      "INSERT INTO usuarios (nome, email, senha, foto) VALUES (?, ?, ?, ?)",
+      [nome, email, senha, foto]
+    );
+
+    conn.release();
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: "Erro no servidor" });
+  }
+});
 
 app.get("/api/ideias/:usuario_id", async (req, res) => {
   try {
