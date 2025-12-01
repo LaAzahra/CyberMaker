@@ -247,7 +247,7 @@ app.post("/api/conclusoes", async (req, res) => {
 });
 
 // Fallback para index.html
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
