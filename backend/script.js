@@ -64,3 +64,14 @@ btnLogout.addEventListener("click", () => {
 });
 
 atualizarHeader();
+async function buscarIdeias() {
+  try {
+    const res = await fetch("/api/ideias");
+    const data = await res.json();
+    ideias = data;
+    carregarIdeias();
+  } catch (err) {
+    console.error("Erro ao buscar ideias:", err);
+  }
+}
+buscarIdeias();
