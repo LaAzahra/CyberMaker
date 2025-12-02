@@ -14,7 +14,7 @@ const app = express();
 
 // --- CONFIGURAÇÃO INICIAL E MIDDLWARES ---
 
-// Health route (Railway/Render check)
+// Health route (Render check)
 app.get("/", (req, res) => res.send("OK"));
 
 app.use(cors());
@@ -180,6 +180,72 @@ app.get("/api/confirmar/:token", async (req, res) => {
 
 
 // --- ROTAS DE FUNCIONALIDADE (ARENA/DESAFIOS) ---
+// arena_frontend.js (Para ser linkado em arena.html)
+
+const API_BASE = (location.hostname.includes("localhost"))
+    ? "http://localhost:3000"
+    : "https://cybermaker-1-n7a7.onrender.com";
+
+async function listarDesafios() {
+    const listaContainer = document.getElementById('lista-desafios');
+    listaContainer.innerHTML = 'Carregando desafios...';
+
+    try {
+        const url = `${API_BASE}/api/desafios`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            listaContainer.innerHTML = ''; // Limpa a mensagem de carregamento
+
+            if (data.desafios.length === 0) {
+                listaContainer.innerHTML = '<p>Nenhum desafio disponível no momento.</p>';
+                return;
+            }
+
+            data.desafios.forEach(desafio => {
+                const desafioDiv = document.createElement('div');
+                desafioDiv.className = 'desafio-card';
+                desafioDiv.innerHTML = `
+                    <h3>${desafio.titulo} (${desafio.area})</h3>
+                    <p>${desafio.descricao.substring(0, 150)}...</p>
+                    <small>Postado por: ${desafio.nome_recrutador}</small><br>
+                    <button onclick="submeterSolucao(${desafio.id})">Submeter Solução</button>
+                `;
+                listaContainer.appendChild(desafioDiv);
+            });
+        } else {
+            listaContainer.innerHTML = `<p>Erro ao carregar desafios: ${data.error}</p>`;
+        }
+    } catch (err) {
+        listaContainer.innerHTML = `<p>Erro de conexão com o servidor de desafios.</p>`;
+        console.error(err);
+    }
+}
+
+// Chame a função ao carregar a página
+document.addEventListener('DOMContentLoaded', listarDesafios);
+
+// NOTE: A função submeterSolucao deve ser implementada para usar POST /api/atividades/submeter
+// Rota para Usuário listar desafios na Arena 
+app.get("/api/desafios", async (req, res) => {
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                d.id, d.titulo, d.descricao, d.area, d.data_postagem,
+                u.nome AS nome_recrutador
+            FROM desafios d
+            JOIN usuarios u ON d.recrutador_id = u.id
+            ORDER BY d.data_postagem DESC
+        `);
+
+        res.json({ success: true, desafios: rows });
+
+    } catch (err) {
+        console.error("❌ Erro ao listar desafios:", err);
+        res.status(500).json({ success: false, error: "Erro interno do servidor." });
+    }
+});
 
 // 4. Rota para Recrutador Postar Desafios (/api/desafios) - NOVA
 app.post("/api/desafios", async (req, res) => {
@@ -293,3 +359,141 @@ app.listen(PORT, () => {
 
 // O trecho final com 'module.exports = db;' foi removido pois este arquivo usa 'import' (ESM)
 // e a conexão já é configurada no início.
+
+// Rota para Usuário postar no Diário
+app.post("/api/diario", async (req, res) => {
+    const { usuario_id, titulo, conteudo } = req.body;
+
+    if (!usuario_id || !conteudo) {
+        return res.status(400).json({ success: false, error: "ID do usuário e Conteúdo do Diário são obrigatórios." });
+    }
+
+    try {
+        await pool.query(
+            "INSERT INTO posts_diario (usuario_id, titulo, conteudo) VALUES (?, ?, ?)",
+            [usuario_id, titulo || null, conteudo] // 'titulo' é opcional
+        );
+
+        res.status(201).json({ 
+            success: true, 
+            message: "Postagem no Diário registrada com sucesso!" 
+        });
+
+    } catch (err) {
+        console.error("❌ Erro ao postar no Diário:", err);
+        res.status(500).json({ success: false, error: "Erro interno do servidor." });
+    }
+});
+
+// Rota para Usuário listar seus posts no Diário
+app.get("/api/diario/:usuario_id", async (req, res) => {
+    const { usuario_id } = req.params;
+
+    try {
+        const [rows] = await pool.query(
+            // Seleciona todos os posts APENAS para o ID do usuário fornecido
+            "SELECT id, titulo, conteudo, data_postagem FROM posts_diario WHERE usuario_id = ? ORDER BY data_postagem DESC",
+            [usuario_id]
+        );
+
+        if (rows.length === 0) {
+            return res.json({ success: true, posts: [], message: "Nenhum registro encontrado no seu Diário." });
+        }
+
+        res.json({ success: true, posts: rows });
+
+    } catch (err) {
+        console.error("❌ Erro ao buscar Diário:", err);
+        res.status(500).json({ success: false, error: "Erro interno do servidor." });
+    }
+});
+
+// Rota para Visualizar o Perfil de um Usuário (incluindo dados do ranking)
+app.get("/api/perfil/:usuario_alvo_id", async (req, res) => {
+    const { usuario_alvo_id } = req.params;
+
+    try {
+        // 1. Buscar dados principais e pontuação
+        const [userData] = await pool.query(
+            "SELECT id, nome, email, foto, pontos, data_criacao FROM usuarios WHERE id = ?",
+            [usuario_alvo_id]
+        );
+
+        if (userData.length === 0) {
+            return res.status(404).json({ success: false, error: "Usuário não encontrado." });
+        }
+        
+        const usuario = userData[0];
+
+        // 2. Buscar posts recentes do Diário deste usuário (opcional, mas útil para recrutadores)
+        const [diarioPosts] = await pool.query(
+            "SELECT id, titulo, data_postagem FROM posts_diario WHERE usuario_id = ? ORDER BY data_postagem DESC LIMIT 5",
+            [usuario_alvo_id]
+        );
+
+        // 3. Buscar submissões (atividades) deste usuário
+        const [atividades] = await pool.query(
+            `
+            SELECT a.link_submissao, a.status, d.titulo AS desafio_titulo
+            FROM atividades a
+            JOIN desafios d ON a.desafio_id = d.id
+            WHERE a.usuario_id = ?
+            ORDER BY a.data_submissao DESC
+            `,
+            [usuario_alvo_id]
+        );
+
+        res.json({ 
+            success: true, 
+            perfil: {
+                ...usuario,
+                diario_recente: diarioPosts,
+                historico_atividades: atividades
+            }
+        });
+
+    } catch (err) {
+        console.error("❌ Erro ao buscar perfil:", err);
+        res.status(500).json({ success: false, error: "Erro interno do servidor." });
+    }
+});
+
+// Rota para Recrutador iniciar Contato com um Usuário
+app.post("/api/contato", async (req, res) => {
+    // O recrutador_id deve vir da sessão/token do recrutador logado
+    const { recrutador_id, usuario_alvo_id, mensagem } = req.body; 
+
+    if (!recrutador_id || !usuario_alvo_id || !mensagem) {
+        return res.status(400).json({ success: false, error: "Faltando IDs ou a mensagem." });
+    }
+
+    try {
+        // 1. Verificação de Autorização (Obrigatório para segurança!)
+        const [userCheck] = await pool.query(
+            "SELECT tipo_usuario FROM usuarios WHERE id = ?",
+            [recrutador_id]
+        );
+        
+        if (userCheck.length === 0 || userCheck[0].tipo_usuario !== 'recrutador') {
+            return res.status(403).json({ success: false, error: "Apenas recrutadores podem iniciar contato." });
+        }
+
+        // 2. Inserção na tabela 'contatos'
+        const [result] = await pool.query(
+            "INSERT INTO contatos (recrutador_id, usuario_alvo_id, mensagem) VALUES (?, ?, ?)",
+            [recrutador_id, usuario_alvo_id, mensagem]
+        );
+
+        // TODO: Opcional: Enviar e-mail de notificação para o usuário_alvo
+
+        res.status(201).json({ 
+            success: true, 
+            message: "Contato registrado com sucesso.",
+            contato_id: result.insertId
+        });
+
+    } catch (err) {
+        console.error("❌ Erro ao registrar contato:", err);
+        res.status(500).json({ success: false, error: "Erro interno do servidor." });
+    }
+});

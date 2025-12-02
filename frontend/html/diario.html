@@ -283,7 +283,7 @@
     historico.innerHTML = "";
     if (!usuarioLogado) return;
 
-    const res = await fetch(`https://cybermakersite-production.up.railway.app/api/ideias`);
+    const res = await fetch(`https://cybermaker-1-n7a7.onrender.com/api/ideias`);
     const ideias = await res.json();
 
     ideias.forEach(ideia => {
@@ -315,7 +315,7 @@
     const categoria = document.getElementById('categoria').value;
     const descricao = document.getElementById('descricao').value.trim();
 
-    const res = await fetch("https://cybermakersite-production.up.railway.app/api/ideias", {
+    const res = await fetch("https://cybermaker-1-n7a7.onrender.com/api/ideias", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

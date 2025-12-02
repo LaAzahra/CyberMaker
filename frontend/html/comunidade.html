@@ -144,7 +144,7 @@
   }
 
   async function carregarPosts() {
-    const res = await fetch("https://cybermakersite-production.up.railway.app/api/comunidade");
+    const res = await fetch("https://cybermaker-1-n7a7.onrender.com/api/comunidade");
     const posts = await res.json();
     renderPosts(posts);
   }
@@ -191,7 +191,7 @@
 
     if (!titulo || !texto) return alert("Título e conteúdo são obrigatórios.");
 
-    const res = await fetch("https://cybermakersite-production.up.railway.app/api/comunidade", {
+    const res = await fetch("https://cybermaker-1-n7a7.onrender.com/api/comunidade", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ usuario_id: user.id, titulo, texto, imagem })

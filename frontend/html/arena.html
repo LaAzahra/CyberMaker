@@ -204,7 +204,7 @@
 
   async function carregarIdeias() {
     arena.innerHTML = "";
-    const res = await fetch("https://cybermakersite-production.up.railway.app/api/ideias");
+    const res = await fetch("https://cybermaker-1-n7a7.onrender.com/api/ideias");
     const ideias = await res.json();
 
     ideias.forEach((ideia, index) => {

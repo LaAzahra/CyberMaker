@@ -1,78 +1,100 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro - CyberMaker</title>
-  <link rel="stylesheet" href="../assets/css/registrar.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - CyberMaker</title>
+  <link rel="stylesheet" href="../assets/css/registrar.css">
 </head>
 <body>
-  <div class="registro-container">
-    <h2>Registrar Conta</h2>
-    <form id="form-registro">
-      <input type="text" id="nome" placeholder="Nome" required>
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="senha" placeholder="Senha" required>
-      <label for="foto">Foto de Perfil (opcional)</label>
-      <input type="file" id="foto" accept="image/*">
-      <button type="submit">Registrar</button>
-    </form>
-    <div class="link">
-      Já possui conta? <a href="../assets/html/login.html">Faça login</a>
-    </div>
-  </div>
+  <div class="registro-container">
+    <h2>Registrar Conta</h2>
+    <form id="form-registro">
+      <input type="text" id="nome" placeholder="Nome" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="senha" placeholder="Senha" required>
 
-  <script>
-    // --- API base configuration ---
-    // Aqui definimos o endereço da API (Railway)
-    const API_BASE = (location.hostname.includes("localhost"))
-      ? "http://localhost:3000"
-      : "https://cybermakersite-production.up.railway.app";
-    // --- end config ---
+            <div class="tipo-usuario-selector">
+          <label>Você é:</label>
+          <div class="radio-options">
+              <input type="radio" id="user-usuario" name="tipo_usuario" value="usuario" checked required>
+              <label for="user-usuario">Usuário (Coder)</label>
+              
+              <input type="radio" id="user-recrutador" name="tipo_usuario" value="recrutador" required>
+              <label for="user-recrutador">Recrutador</label>
+          </div>
+      </div>
+            <label for="foto">Foto de Perfil (opcional)</label>
+      <input type="file" id="foto" accept="image/*">
+      
+      <button type="submit">Registrar</button>
+    </form>
+    <div class="link">
+      Já possui conta? <a href="../assets/html/login.html">Faça login</a>
+    </div>
+  </div>
 
-    document.getElementById("form-registro").addEventListener("submit", async e => {
-      e.preventDefault();
+  <script>
+    // --- API base configuration ---
+    // Aqui definimos o endereço da API
+    const API_BASE = (location.hostname.includes("localhost"))
+      ? "http://localhost:3000/api" // Adicione /api para consistência
+      : "https://cybermaker-1-n7a7.onrender.com/api"; // Adicione /api
+    // --- end config ---
 
-      const nome = document.getElementById("nome").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const senha = document.getElementById("senha").value.trim();
-      const fotoInput = document.getElementById("foto");
+    document.getElementById("form-registro").addEventListener("submit", async e => {
+      e.preventDefault();
 
-      // Função auxiliar para enviar ao backend
-      async function enviarRegistro(fotoBase64 = null) {
-        try {
-          const res = await fetch(`https://cybermakersite-production.up.railway.app/api/registrar`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ nome, email, senha, foto: fotoBase64 })
-          });
+      const nome = document.getElementById("nome").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const senha = document.getElementById("senha").value.trim();
+      const fotoInput = document.getElementById("foto");
+      // NOVO: Captura o tipo de usuário
+      const tipo_usuario = document.querySelector('input[name="tipo_usuario"]:checked').value; 
 
-          const data = await res.json();
-          if (data.success) {
-            alert("Registrado com sucesso!");
-            window.location.href = "../assets/html/login.html";
-          } else {
-            alert("Erro: " + data.error);
-          }
-        } catch (err) {
-          console.error("Erro na requisição:", err);
-          alert("Erro de conexão com o servidor!");
-        }
-      }
+      // Função auxiliar para enviar ao backend
+      async function enviarRegistro(fotoBase64 = null) {
+        try {
+            // CORREÇÃO: Usando API_BASE corretamente e enviando tipo_usuario
+          const res = await fetch(`${API_BASE}/registrar`, {
+            method: "POST",
+  headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ 
+                nome, 
+                email, 
+                senha, 
+                foto: fotoBase64,
+                tipo_usuario // NOVO: Campo obrigatório no backend
+            })
+          });
 
-      // Se o usuário escolheu foto → converter para Base64
-      if (fotoInput.files.length > 0) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const fotoBase64 = reader.result; // já vem no formato data:image/png;base64,...
-          enviarRegistro(fotoBase64);
-        };
-        reader.readAsDataURL(fotoInput.files[0]);
-      } else {
-        // Sem foto
-        enviarRegistro();
-      }
-    });
-  </script>
+          const data = await res.json();
+          
+          if (res.ok && data.success) { // Verifica o status HTTP e a resposta JSON
+            // FLUXO CORRIGIDO: Redireciona para aviso de confirmação de e-mail
+            alert(data.message || "Registrado com sucesso! Verifique seu e-mail.");
+            window.location.href = "../assets/html/confirmacao_pendente.html"; 
+          } else {
+            alert("Erro: " + data.error);
+          }
+        } catch (err) {
+          console.error("Erro na requisição:", err);
+          alert("Erro de conexão com o servidor!");
+        }
+      }
+
+      // Lógica de conversão de foto (mantida)
+      if (fotoInput.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          enviarRegistro(reader.result); 
+        };
+        reader.readAsDataURL(fotoInput.files[0]);
+      } else {
+        // Sem foto
+        enviarRegistro();
+      }
+    });
+  </script>
 </body>
 </html>
