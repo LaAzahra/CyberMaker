@@ -274,9 +274,9 @@ async function listarDesafios() {
                     <h3>${desafio.titulo} (${desafio.area})</h3>
                     <p>${desafio.descricao.substring(0, 150)}...</p>
                     <small>Postado por: ${desafio.nome_recrutador}</small><br>
-                    <button onclick="submeterSolucao(${desafio.id})">Submeter Solução</button>
-                `;
+                    <button onclick="submeterSolucao(${desafio.id})">Submeter Solução</button> `;
                 listaContainer.appendChild(desafioDiv);
+                
             });
         } else {
             listaContainer.innerHTML = `<p>Erro ao carregar desafios: ${data.error}</p>`;

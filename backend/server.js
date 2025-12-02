@@ -178,10 +178,6 @@ app.get("/api/confirmar/:token", async (req, res) => {
     }
 });
 
-// Chame a função ao carregar a página
-document.addEventListener('DOMContentLoaded', listarDesafios);
-
-// NOTE: A função submeterSolucao deve ser implementada para usar POST /api/atividades/submeter
 // Rota para Usuário listar desafios na Arena 
 app.get("/api/desafios", async (req, res) => {
     try {
