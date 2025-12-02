@@ -243,3 +243,46 @@
 
 </body>
 </html>
+// --- ROTAS DE FUNCIONALIDADE (ARENA/DESAFIOS) ---
+// arena_frontend.js (Para ser linkado em arena.html)
+
+const API_BASE = (location.hostname.includes("localhost"))
+    ? "http://localhost:3000"
+    : "https://cybermaker-1-n7a7.onrender.com";
+
+async function listarDesafios() {
+    const listaContainer = document.getElementById('lista-desafios');
+    listaContainer.innerHTML = 'Carregando desafios...';
+
+    try {
+        const url = `${API_BASE}/api/desafios`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            listaContainer.innerHTML = ''; // Limpa a mensagem de carregamento
+
+            if (data.desafios.length === 0) {
+                listaContainer.innerHTML = '<p>Nenhum desafio disponível no momento.</p>';
+                return;
+            }
+
+            data.desafios.forEach(desafio => {
+                const desafioDiv = document.createElement('div');
+                desafioDiv.className = 'desafio-card';
+                desafioDiv.innerHTML = `
+                    <h3>${desafio.titulo} (${desafio.area})</h3>
+                    <p>${desafio.descricao.substring(0, 150)}...</p>
+                    <small>Postado por: ${desafio.nome_recrutador}</small><br>
+                    <button onclick="submeterSolucao(${desafio.id})">Submeter Solução</button>
+                `;
+                listaContainer.appendChild(desafioDiv);
+            });
+        } else {
+            listaContainer.innerHTML = `<p>Erro ao carregar desafios: ${data.error}</p>`;
+        }
+    } catch (err) {
+        listaContainer.innerHTML = `<p>Erro de conexão com o servidor de desafios.</p>`;
+        console.error(err);
+    }
+}
